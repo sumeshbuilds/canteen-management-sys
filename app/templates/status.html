@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Track Order{% endblock %}
+{% block content %}
+<section class="page-head"><p class="eyebrow">ORDER TRACKING</p><h1>Track your order</h1><p class="muted">Enter the order number shown after you place an order.</p></section>
+<form method="post" class="panel narrow">
+  <label>Order number<input type="number" name="order_id" min="1" required placeholder="e.g. 12"></label>
+  <button class="button" type="submit">Find order</button>
+</form>
+{% if order %}
+<section class="panel narrow result-panel">
+  <div class="line-item"><strong>Order #{{ order.id }}</strong><span class="status status-{{ order.status|lower }}">{{ order.status }}</span></div>
+  <p>{{ order.student_name }} · {{ order.created_at }}</p>
+  {% for item in items %}
+  <div class="line-item"><span>{{ item.item_name }} × {{ item.quantity }}</span><strong>₹{{ '%.2f'|format(item.unit_price * item.quantity) }}</strong></div>
+  {% endfor %}
+  <div class="line-item total-line"><strong>Total</strong><strong>₹{{ '%.2f'|format(order.total) }}</strong></div>
+</section>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Order Confirmation{% endblock %}
+{% block content %}
+<section class="confirmation">
+  <div class="success-icon">✓</div>
+  <p class="eyebrow">ORDER PLACED</p>
+  <h1>Thank you, {{ order.student_name }}!</h1>
+  <p>Your order has been received by the canteen.</p>
+  <div class="order-number">Order #{{ order.id }} <span class="status status-{{ order.status|lower }}">{{ order.status }}</span></div>
+  <div class="panel">
+    {% for item in items %}
+    <div class="line-item"><span>{{ item.item_name }} × {{ item.quantity }}</span><strong>₹{{ '%.2f'|format(item.unit_price * item.quantity) }}</strong></div>
+    {% endfor %}
+    <div class="line-item total-line"><span>Total to pay at counter</span><strong>₹{{ '%.2f'|format(order.total) }}</strong></div>
+    <p class="muted small">Roll number: {{ order.student_id }} · {{ order.created_at }}</p>
+  </div>
+  <div class="actions"><a class="button" href="{{ url_for('orders.order_status') }}">Track order</a><a class="button secondary" href="{{ url_for('menu.index') }}">Back to menu</a></div>
+</section>
+{% endblock %}

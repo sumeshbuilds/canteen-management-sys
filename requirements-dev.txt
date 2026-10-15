@@ -1,0 +1,6 @@
+-r requirements.txt
+
+# Testing (Phase 1 onwards). The current smoke tests also run with the
+# stdlib: python -m unittest discover -s tests -v
+pytest>=8.0
+pytest-flask>=1.3

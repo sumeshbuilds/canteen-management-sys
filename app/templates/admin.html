@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard{% endblock %}
+{% block content %}
+<section class="page-head"><p class="eyebrow">CANTEEN MANAGEMENT</p><h1>Admin dashboard</h1><p class="muted">Manage the menu, orders, and daily sales.</p></section>
+<div class="stats">
+  <div class="stat-card"><span>Today's orders</span><strong>{{ order_count }}</strong></div>
+  <div class="stat-card"><span>Today's sales*</span><strong>₹{{ '%.2f'|format(sales) }}</strong></div>
+  <div class="stat-card"><span>Menu items</span><strong>{{ items|length }}</strong></div>
+</div>
+<p class="muted small">*Sales total excludes cancelled orders. This is a student demo dashboard; add login security before real deployment.</p>
+
+<section class="panel">
+  <h2>Add menu item</h2>
+  <form method="post" class="admin-add">
+    <input type="hidden" name="action" value="add_item">
+    <label>Item name<input name="name" required maxlength="80" placeholder="e.g. Masala Dosa"></label>
+    <label>Category<input name="category" required maxlength="40" placeholder="e.g. Breakfast"></label>
+    <label>Price (₹)<input name="price" type="number" min="0" step="0.50" required placeholder="40"></label>
+    <button class="button" type="submit">Add item</button>
+  </form>
+</section>
+
+<section class="panel">
+  <h2>Menu availability</h2>
+  <div class="table-wrap"><table><thead><tr><th>Item</th><th>Category</th><th>Price</th><th>Availability</th><th>Action</th></tr></thead><tbody>
+  {% for item in items %}
+  <tr><td>{{ item.name }}</td><td>{{ item.category }}</td><td>₹{{ '%.2f'|format(item.price) }}</td><td>{{ 'Available' if item.available else 'Unavailable' }}</td><td>
+    <form method="post"><input type="hidden" name="action" value="toggle_item"><input type="hidden" name="item_id" value="{{ item.id }}"><button class="small-button" type="submit">{{ 'Disable' if item.available else 'Enable' }}</button></form>
+  </td></tr>
+  {% endfor %}
+  </tbody></table></div>
+</section>
+
+<section class="panel">
+  <h2>Recent orders</h2>
+  {% if orders %}
+  <div class="table-wrap"><table><thead><tr><th>Order</th><th>Student</th><th>Time</th><th>Total</th><th>Status</th><th>Update</th></tr></thead><tbody>
+  {% for order in orders %}
+  <tr><td>#{{ order.id }}</td><td>{{ order.student_name }}<br><span class="muted small">{{ order.student_id }}</span></td><td>{{ order.created_at }}</td><td>₹{{ '%.2f'|format(order.total) }}</td><td><span class="status status-{{ order.status|lower }}">{{ order.status }}</span></td><td>
+    <form method="post" class="status-form"><input type="hidden" name="action" value="update_status"><input type="hidden" name="order_id" value="{{ order.id }}">
+    <select name="status" aria-label="Order status">
+      {% for s in order_statuses %}<option value="{{ s }}" {{ 'selected' if order.status == s else '' }}>{{ s }}</option>{% endfor %}
+    </select><button class="small-button" type="submit">Save</button></form>
+  </td></tr>
+  {% endfor %}
+  </tbody></table></div>
+  {% else %}<p class="muted">No orders yet. New orders will appear here.</p>{% endif %}
+</section>
+{% endblock %}
